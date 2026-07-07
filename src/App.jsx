@@ -5,6 +5,7 @@ import { PRODUCTS, findProductBySlug } from './productsData.js';
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
+  const [playFailed, setPlayFailed] = useState(false);
   const videoRef = useRef(null);
   
   // Simple routing: get product from URL path
@@ -17,9 +18,13 @@ export default function App() {
 
   useEffect(() => {
     if (showIntro && videoRef.current) {
-      videoRef.current.play().catch(error => {
-        console.log("Autoplay with sound was prevented by browser:", error);
-      });
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("Autoplay with sound was prevented by browser:", error);
+          setPlayFailed(true);
+        });
+      }
     }
   }, [showIntro]);
 
@@ -39,8 +44,20 @@ export default function App() {
             controls
             onEnded={() => setShowIntro(false)}
           />
+          {playFailed && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm cursor-pointer" onClick={() => {
+              if (videoRef.current) {
+                videoRef.current.play();
+                setPlayFailed(false);
+              }
+            }}>
+               <button className="px-8 py-4 bg-white/20 border border-white/40 text-white hover:bg-white/30 font-bold rounded-xl text-xl shadow-2xl transition-all hover:scale-105">
+                 ▶ Tap to Play Sound
+               </button>
+            </div>
+          )}
           <button
-            className="absolute top-4 right-4 px-4 py-2 rounded-md bg-white/10 border border-white/30 text-white hover:bg-white/20"
+            className="absolute top-4 right-4 px-4 py-2 rounded-md bg-white/10 border border-white/30 text-white hover:bg-white/20 z-20"
             onClick={() => setShowIntro(false)}
           >
             Skip
