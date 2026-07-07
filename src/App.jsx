@@ -33,6 +33,7 @@ export default function App() {
             className="max-h-screen w-auto"
             src="/intro take 4.mp4"
             autoPlay
+            muted
             playsInline
             preload="auto"
             poster="/new.jpeg"
