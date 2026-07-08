@@ -100,11 +100,11 @@ export default function App() {
 
       {/* Header box with logo video */}
       <header className="pt-0 sm:pt-0 mt-6 sm:mt-8 pb-6 text-center select-none">
-        <div className="mx-auto w-[530px] sm:w-[850px] max-w-[92vw] aspect-video rounded-2xl bg-white/8 border border-white/20 backdrop-blur-md overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.25)] transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)]">
+        <div className="mx-auto w-[320px] sm:w-[500px] max-w-[92vw] h-[200px] sm:h-[260px] rounded-2xl bg-white/8 border border-white/20 backdrop-blur-md overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.25)] transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)]">
           <video 
             ref={loVideoRef}
             src="/lo.mp4" 
-            className="w-full h-full object-cover rounded-2xl bg-white/8 backdrop-blur-md ring-1 ring-white/20 shadow-inner" 
+            className="w-full h-full object-contain rounded-2xl bg-white/8 backdrop-blur-md ring-1 ring-white/20 shadow-inner" 
             loop 
             playsInline 
           />
