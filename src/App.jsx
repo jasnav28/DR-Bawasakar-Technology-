@@ -6,7 +6,10 @@ import { PRODUCTS, findProductBySlug } from './productsData.js';
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
   const [playFailed, setPlayFailed] = useState(false);
+  const [isIntroMuted, setIsIntroMuted] = useState(false);
   const videoRef = useRef(null);
+  const loVideoRef = useRef(null);
+  const [loPlayFailed, setLoPlayFailed] = useState(false);
   
   // Simple routing: get product from URL path
   const pathname = window.location.pathname.split('/').pop() || '';
@@ -18,11 +21,43 @@ export default function App() {
 
   useEffect(() => {
     if (showIntro && videoRef.current) {
+      // Try to play with sound first
+      videoRef.current.muted = false;
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
         playPromise.catch(error => {
-          console.log("Autoplay with sound was prevented by browser:", error);
-          setPlayFailed(true);
+          console.log("Autoplay with sound was prevented by browser, playing muted:", error);
+          // Fall back to muted autoplay
+          if (videoRef.current) {
+            videoRef.current.muted = true;
+            setIsIntroMuted(true);
+            setPlayFailed(true);
+            videoRef.current.play().catch(err => {
+              console.log("Muted autoplay also failed:", err);
+            });
+          }
+        });
+      }
+    }
+  }, [showIntro]);
+
+  useEffect(() => {
+    if (!showIntro && loVideoRef.current) {
+      // The user has interacted with the page (skipped or watched intro),
+      // so we can play the video with sound!
+      loVideoRef.current.muted = false;
+      const playPromise = loVideoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("lo.mp4 autoplay with sound was prevented, playing muted:", error);
+          // Fall back to muted play if somehow blocked
+          if (loVideoRef.current) {
+            loVideoRef.current.muted = true;
+            setLoPlayFailed(true);
+            loVideoRef.current.play().catch(err => {
+              console.log("lo.mp4 muted autoplay also failed:", err);
+            });
+          }
         });
       }
     }
@@ -41,18 +76,21 @@ export default function App() {
             playsInline
             preload="auto"
             poster="/new.jpeg"
+            muted={isIntroMuted}
             controls
             onEnded={() => setShowIntro(false)}
           />
           {playFailed && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm cursor-pointer" onClick={() => {
               if (videoRef.current) {
-                videoRef.current.play();
+                videoRef.current.muted = false;
+                setIsIntroMuted(false);
+                videoRef.current.play().catch(e => console.log("Failed to play after click:", e));
                 setPlayFailed(false);
               }
             }}>
                <button className="px-8 py-4 bg-white/20 border border-white/40 text-white hover:bg-white/30 font-bold rounded-xl text-xl shadow-2xl transition-all hover:scale-105">
-                 ▶ Tap to Play Sound
+                 🔊 Tap for Sound
                </button>
             </div>
           )}
@@ -72,15 +110,34 @@ export default function App() {
 
       {/* Header box with logo video */}
       <header className="pt-0 sm:pt-0 mt-6 sm:mt-8 pb-6 text-center select-none">
-        <div className="mx-auto w-[320px] sm:w-[500px] max-w-[92vw] h-[200px] sm:h-[260px] rounded-2xl bg-white/8 border border-white/20 backdrop-blur-md overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.25)] transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)]">
-            <video 
-              src="/lo.mp4" 
-              className="w-full h-full object-cover rounded-2xl bg-white/8 backdrop-blur-md ring-1 ring-white/20 shadow-inner" 
-              autoPlay 
-              loop 
-              playsInline 
-            />
-          </div>
+        <div 
+          className="mx-auto w-[320px] sm:w-[500px] max-w-[92vw] h-[200px] sm:h-[260px] rounded-2xl bg-white/8 border border-white/20 backdrop-blur-md overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.25)] transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-[0_30px_60px_rgba(0,0,0,0.3)] relative cursor-pointer"
+          onClick={() => {
+            if (loVideoRef.current) {
+              if (loVideoRef.current.muted) {
+                loVideoRef.current.muted = false;
+                setLoPlayFailed(false);
+                loVideoRef.current.play().catch(e => console.log(e));
+              } else {
+                loVideoRef.current.muted = true;
+                setLoPlayFailed(true);
+              }
+            }
+          }}
+        >
+          <video 
+            ref={loVideoRef}
+            src="/lo.mp4" 
+            className="w-full h-full object-cover rounded-2xl bg-white/8 backdrop-blur-md ring-1 ring-white/20 shadow-inner" 
+            loop 
+            playsInline 
+          />
+          {loPlayFailed && (
+            <div className="absolute bottom-4 right-4 bg-black/60 hover:bg-black/80 text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 backdrop-blur-sm z-10 transition-colors">
+              🔊 Tap for Sound
+            </div>
+          )}
+        </div>
         <div className="mt-2 text-xs sm:text-sm text-white font-semibold tracking-wide">Bio‑Stimulant Registration Details</div>
       </header>
 
