@@ -12,7 +12,7 @@ const products = [
   'SPLENDOUR',
   'THRIVER',
   'RIPENER',
-  'PROTECTANT',
+  'PROTECTANT-P',
   'PRISOM',
   'NUTRATONE',
   'CROP SHINER'
@@ -41,7 +41,12 @@ async function generateQRPDFs() {
 
       doc.moveDown(2);
       // Draw product name
-      doc.fontSize(20).text(product, { align: 'center' });
+      if (product === 'PROTECTANT-P') {
+        doc.fontSize(20).text('PROTECTANT-P ', { align: 'center', continued: true })
+           .fontSize(12).text('(R&D)', { align: 'center' });
+      } else {
+        doc.fontSize(20).text(product, { align: 'center' });
+      }
       doc.moveDown(1);
 
       // Embed QR code image

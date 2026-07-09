@@ -123,7 +123,16 @@ export default function App() {
               </div>
               <div className="flex-1">
                 <div className="text-[#d9c98f] text-xs sm:text-sm">Product Name:</div>
-                <div className="text-white text-xl sm:text-2xl font-semibold tracking-wide">{product.displayName || product.brand}</div>
+                <div className="text-white text-xl sm:text-2xl font-semibold tracking-wide">
+                  {product.brand === 'PROTECTANT-P' ? (
+                    <span>
+                      PROTECTANT-P
+                      <span className="text-xs sm:text-sm font-normal text-white/70 ml-2">(R&D)</span>
+                    </span>
+                  ) : (
+                    product.displayName || product.brand
+                  )}
+                </div>
               </div>
             </div>
           </StarBorder>

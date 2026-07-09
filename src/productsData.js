@@ -87,7 +87,7 @@ export const PRODUCTS = [
     ]
   },
   {
-    brand: 'PROTECTANT',
+    brand: 'PROTECTANT-P',
     specification: 'Mixture of Antioxidant and Vitamins (Powder)',
     category: 'Mixed Formulation',
     crops: ['Cotton', 'Potato'],
@@ -166,7 +166,12 @@ export const SLUG_TO_BRAND = {
   'SPLENDOUR': 'SPLENDOUR',
   'THRIVER': 'THRIVER',
   'RIPENER': 'RIPENER',
-  'PROTECTANT': 'PROTECTANT',
+  'PROTECTANT': 'PROTECTANT-P',
+  'PROTECTANT-P': 'PROTECTANT-P',
+  'PROTECTANT P': 'PROTECTANT-P',
+  'PROTECTAN-P': 'PROTECTANT-P',
+  'PROTECTAN P': 'PROTECTANT-P',
+  'PROTECTAN': 'PROTECTANT-P',
   'PRISOM': 'PRISOM',
   'NUTRATONE': 'NUTRATONE',
   'CROP SHINER': 'CROP SHINER'
